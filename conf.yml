@@ -1,0 +1,18 @@
+
+services:
+  vault:
+    image: hashicorp/vault:1.19          # pin a stable GA tag
+    container_name: vault
+    restart: unless-stopped
+    cap_add:
+      - IPC_LOCK                         # prevents Vault being swapped to disk
+    command: >
+      vault server -config=/vault/config/vault.hcl
+    ports:
+      - "7700:8200"                      # UI & API
+    volumes:
+      - ./config:/vault/config:ro        # vault.hcl lives here
+      - ./data:/vault/data               # Raft data directory
+      - ./logs:/vault/logs               # optional: audit / server logs
+    environment:
+      VAULT_ADDR: "http://localhost:7700"  # local CLI convenience
