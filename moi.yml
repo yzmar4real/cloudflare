@@ -1,0 +1,34 @@
+services:
+  mongo:
+    image: mongo:6.0
+    container_name: dev_mongo
+    ports:
+      - "7701:27017"
+    networks:
+      - devnet
+    volumes:
+      - mongo_data:/data/db
+
+  vault:
+    image: hashicorp/vault:1.15
+    container_name: dev_vault
+    ports:
+      - "7702:7702"
+    cap_add:
+      - IPC_LOCK
+    environment:
+      VAULT_DEV_ROOT_TOKEN_ID: "myroot"
+      VAULT_DEV_LISTEN_ADDRESS: "0.0.0.0:7702"
+    networks:
+      - devnet
+    volumes:
+      - vault_data:/vault/file
+
+networks:
+  devnet:
+    driver: bridge
+    name: shared_devnet
+
+volumes:
+  mongo_data:
+  vault_data:
